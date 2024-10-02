@@ -2,6 +2,10 @@ import tkinter as tk
 from gui.components import ScrollableLeaderboard
 from game_logic.player_manager import PlayerManager
 from PIL import Image, ImageTk
+import os
+import threading
+import random
+import pygame
 
 
 class GameReview(tk.Frame):
@@ -12,6 +16,19 @@ class GameReview(tk.Frame):
         resized_image = image.resize((1600, 900), Image.LANCZOS)  # Resize image using LANCZOS
 
         self.bg_image = ImageTk.PhotoImage(resized_image)
+
+        # Initialize pygame mixer for music
+        music_folder = r"assets\\Music_Review"
+
+        # Get list of all music files in the folder
+        music_files = [os.path.join(music_folder, file) for file in os.listdir(music_folder) if
+                       file.endswith(('.mp3', '.wav'))]
+
+        # Choose a random music file to play
+        random_music = random.choice(music_files)
+
+        pygame.mixer.music.load(random_music)  # Load the randomly chosen music
+        pygame.mixer.music.play(-1)  # Play the music in a loop
 
         # Create a label to hold the background image
         self.bg_label = tk.Label(self, image=self.bg_image)
@@ -56,7 +73,7 @@ class GameReview(tk.Frame):
         self.leaderboard_display.place(relx=0.5, rely=0.48, anchor=tk.CENTER, width=550, height=357)
 
         # Player's ranking row (only show if player is not in top 5)
-        if player_rank > 5:
+        if player_rank > 0:
             self.player_ranking_label = tk.Label(self, text=f"Your Rank: {player_rank} (Score: {self.pm.get_player_score()})", font=('Arial 22 bold'), fg="#384987", bg="#E6CF00")
             self.player_ranking_label.pack(pady=10)
             self.player_ranking_label.place(relx=0.5, rely=0.76, anchor=tk.CENTER)
@@ -96,6 +113,7 @@ class GameReview(tk.Frame):
             self.main_menu_button.place(relx=0.5, rely=0.88, anchor=tk.CENTER, width=150, height=45)
 
     def play_again(self):
+        pygame.mixer.music.stop()
         self.pack_forget()  # Hide review frame
         # Go back to the main game frame (this part depends on how you manage transitions)
         from gui.game_frame import GameFrame
@@ -108,3 +126,4 @@ class GameReview(tk.Frame):
         from gui.main_menu import MainMenu
         main_menu = MainMenu(self.master)
         main_menu.pack(fill=tk.BOTH, expand=True)
+        pygame.mixer.music.stop()

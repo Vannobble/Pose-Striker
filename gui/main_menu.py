@@ -3,6 +3,10 @@ from PIL import Image, ImageTk
 from gui.components import ScrollableLeaderboard, DropdownMenu
 from gui.game_frame import GameFrame
 from game_logic.player_manager import PlayerManager
+import pygame
+import os
+import random
+import threading
 
 class MainMenu(tk.Frame):
     def __init__(self, parent):
@@ -17,7 +21,12 @@ class MainMenu(tk.Frame):
         # Create a label to hold the background image
         self.bg_label = tk.Label(self, image=self.bg_image)
         self.bg_label.place(relx=0, y=0, relwidth=1, relheight=1)  # Make it full screen
-        
+
+        # Initialize pygame mixer in a separate thread for music
+        pygame.mixer.init()
+        self.music_thread = threading.Thread(target=self.play_music, daemon=True)
+        self.music_thread.start()
+
         # create the leaderboard frame
         self.create_leaderboard_frame()
         self.create_player_input_section()
@@ -55,6 +64,16 @@ class MainMenu(tk.Frame):
         self.start_button.pack(pady=30)
         self.start_button.place(relx=0.5, rely=0.92, anchor=tk.CENTER, width=150, height=40)
 
+    def play_music(self):
+        # Music folder and loading music files
+        music_folder1 = r"assets\\music"
+        music_files1 = [os.path.join(music_folder1, file) for file in os.listdir(music_folder1) if
+                        file.endswith(('.mp3', '.wav'))]
+
+        if music_files1:
+            random_music1 = random.choice(music_files1)
+            pygame.mixer.music.load(random_music1)
+            pygame.mixer.music.play(-1)  # Loop indefinitely
 
     def create_leaderboard_frame(self):
 
@@ -85,6 +104,8 @@ class MainMenu(tk.Frame):
                 if not player_exist:
                     pm.add_player(player_name, player_cluster)
                 pm.set_current_player(player_name, player_cluster)
+
+                pygame.mixer.music.stop()
 
                 self.pack_forget()  # Hide main menu
                 game_frame = GameFrame(self.master)
