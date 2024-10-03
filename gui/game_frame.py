@@ -6,8 +6,6 @@ from PIL import Image, ImageTk
 import threading
 import time
 import os
-import pygame
-import random
 
 class GameFrame(tk.Frame):
     def __init__(self, parent, timer_running=True):
@@ -17,31 +15,33 @@ class GameFrame(tk.Frame):
 
         # Load and resize background image using Pillow
         image = Image.open(r"assets/decor/game frame.png")
-        resized_image = image.resize((1600,900), Image.LANCZOS)  # Resize image using LANCZOS
+        resized_image = image.resize((1600, 900), Image.LANCZOS)  # Resize image using LANCZOS
 
         self.bg_image = ImageTk.PhotoImage(resized_image)
 
         # Create a label to hold the background image
         self.bg_label = tk.Label(self, image=self.bg_image)
-        self.bg_label.place(relx=0, y=0, relwidth=1, relheight=1)  # Make it full screen
+        self.bg_label.place(relx=0, rely=0, relwidth=1, relheight=1)  # Make it full screen
 
         pm = PlayerManager.get_instance()
-        # Initialize pygame mixer for music
-        music_folder = r"assets\\Music_Game"
-
-        # Get list of all music files in the folder
-        music_files = [os.path.join(music_folder, file) for file in os.listdir(music_folder) if
-                       file.endswith(('.mp3', '.wav'))]
-
-        # Choose a random music file to play
-        random_music = random.choice(music_files)
-
-        pygame.mixer.music.load(random_music)  # Load the randomly chosen music
-        pygame.mixer.music.play(-1)  # Play the music in a loop
 
         # Middle frame for reference image, score, timer, and combo
-        self.middle_frame = tk.Frame(self)
-        self.middle_frame.pack(pady=0)  # Set pady to 0 for no vertical padding
+        self.middle_frame = tk.Frame(self, bg='gold2')
+        self.middle_frame.pack(pady=0, padx=0)
+        self.middle_frame.place(relx=0.5, rely=0.58, relwidth=0.91, anchor=tk.CENTER)
+
+        # Load match status images
+        self.match_img_match = Image.open(r"assets/decor/spot.png")
+        self.match_img_match = self.match_img_match.resize((230, 70), Image.LANCZOS)
+        self.match_imgtk_match = ImageTk.PhotoImage(self.match_img_match)
+
+        self.match_img_no_match = Image.open(r"assets/decor/keep.png")
+        self.match_img_no_match = self.match_img_no_match.resize((230, 70), Image.LANCZOS)
+        self.match_imgtk_no_match = ImageTk.PhotoImage(self.match_img_no_match)
+
+        # Pose match status label to display images
+        self.match_status_label = tk.Label(self, image=self.match_imgtk_no_match, bg='gold2')  # Default to no match image
+        self.match_status_label.pack(side=tk.TOP, pady=0.3)
 
         # Define the possible extensions
         extensions = ['.png', '.jpg', '.jpeg', '.webp']
@@ -60,44 +60,57 @@ class GameFrame(tk.Frame):
         self.reference_imgtk = ImageTk.PhotoImage(self.reference_img)
 
         # Reference label without background color
-        self.reference_label = tk.Label(self.middle_frame, image=self.reference_imgtk,bg="gray24")
-        self.reference_label.pack(side=tk.LEFT, padx=0)  # Set padx to 0 for no horizontal paddin
+        self.reference_label = tk.Label(self.middle_frame, image=self.reference_imgtk, bg='gold2')
+        self.reference_label.pack(side=tk.LEFT, padx=0)
 
-        # Frame for score, timer, and combo inside reference image
-        self.overlay_frame = tk.Frame(self.middle_frame)
-        self.overlay_frame.place(x=20, y=20)
+        # Top block (frame) with 'gold2' color
+        self.top_block = tk.Label(self, bg='gold2')
+        self.top_block.place(relx=0.5, rely=0.29, relwidth=0.91, relheight=0.03, anchor=tk.CENTER)
+
+        # Bottom block (frame) with 'gold2' color
+        self.bottom_block = tk.Label(self, bg='gold2')
+        self.bottom_block.place(relx=0.5, rely=0.88, relwidth=0.91, relheight=0.03, anchor=tk.CENTER)
+
+        # Frame for score, timer, and combo
+        self.overlay_frame = tk.Frame(self, bg='#E6CF00')  # Set background color to #E6CF00
+        self.overlay_frame.place(relx=0.5, rely=0.18, anchor=tk.CENTER)  # Center the frame
 
         # Score label (Top-left)
-        self.score_label = tk.Label(self.overlay_frame, text=f"Score: {pm.get_player_score()}", font=("Arial", 30))
+        self.score_label = tk.Label(self.overlay_frame, text=f"{pm.get_player_score()}", font=('Arial 30 bold'), bg='#E6CF00')
         self.score_label.pack(side=tk.LEFT, padx=10)
 
         # Combo label (Top-right)
-        self.combo_label = tk.Label(self.overlay_frame, text="", font=("Arial", 30))
+        self.combo_label = tk.Label(self.overlay_frame, text="", font=('Arial 30 bold'), bg='#E6CF00')
         self.combo_label.pack(side=tk.LEFT, padx=50)
 
         # Timer label (Centered)
-        self.timer_label = tk.Label(self.overlay_frame, text=f"Time left: {self.time_left}", font=("Arial", 30))
-        self.timer_label.pack(side=tk.LEFT, padx=70)
-
-        # Pose label
-        self.match_status_label = tk.Label(self.middle_frame, text="No match", font=("Arial", 30), fg="red")
-        self.match_status_label.pack(side=tk.TOP, pady=0)
+        self.timer_label = tk.Label(self.overlay_frame, text=f"{self.time_left}", font=('Arial 30 bold'), bg='#E6CF00')
+        self.timer_label.pack(side=tk.RIGHT, padx=70)
 
         # Video feed label without background color
-        self.video_label = tk.Label(self.middle_frame, width=750, height=750)
-        self.video_label.pack(side=tk.RIGHT, padx=0)  # Set padx to 0 for no horizontal padding
+        self.video_label = tk.Label(self.middle_frame, width=0, height=0, bg='gold2')
+        self.video_label.pack(side=tk.RIGHT, padx=0)
 
         self.camera_feed = CameraFeed(self.video_label)
         self.timer_running = timer_running
         threading.Thread(target=self.update_timer, daemon=True).start()
 
-        # Skip Pose button
-        self.skip_pose_button = tk.Button(self, text="Skip Pose", command=self.skip_pose, bg="gold2")
-        self.skip_pose_button.place(relx=0.46, rely=0.85, anchor=tk.CENTER, width=100, height=30)
+        # Load images for the buttons
+        skip_image = Image.open(r"assets/decor/skip.png")
+        skip_image = skip_image.resize((150, 45), Image.LANCZOS)  # Adjust the size as necessary
+        self.skip_imgtk = ImageTk.PhotoImage(skip_image)
 
-        # Give up button
-        self.give_up_button = tk.Button(self, text="Give Up", command=self.end_game, bg="#C7253E")
-        self.give_up_button.place(relx=0.55, rely=0.85, anchor=tk.CENTER, width=100, height=30)
+        give_up_image = Image.open(r"assets/decor/give.png")
+        give_up_image = give_up_image.resize((150, 45), Image.LANCZOS)  # Adjust the size as necessary
+        self.give_up_imgtk = ImageTk.PhotoImage(give_up_image)
+
+        # Skip Pose button with image
+        self.skip_pose_button = tk.Button(self, image=self.skip_imgtk, command=self.skip_pose, bg="gold2")
+        self.skip_pose_button.place(relx=0.40, rely=0.95, anchor=tk.CENTER, width=150, height=45)
+
+        # Give up button with image
+        self.give_up_button = tk.Button(self, image=self.give_up_imgtk, command=self.end_game, bg="#C7253E")
+        self.give_up_button.place(relx=0.60, rely=0.95, anchor=tk.CENTER, width=150, height=45)
 
         # Game Logic initialization
         self.game_logic = GameLogic(self.reference_images, self.camera_feed, self.update_score, self.update_combo_text, self.update_match_status)
@@ -107,13 +120,20 @@ class GameFrame(tk.Frame):
         while self.time_left > 0 and self.timer_running:
             time.sleep(1)
             self.time_left -= 1
-            self.timer_label.config(text=f"Time left: {self.time_left}")
-        if self.timer_running:  # this is executed upon timer timeout, not upon Give Up button press
+            self.timer_label.config(text=f"{self.time_left}")
+        if self.timer_running:
             self.end_game()
+
+    def update_match_status(self, match):
+        # Update the match_status_label with the correct image based on the match status
+        if match:
+            self.match_status_label.config(image=self.match_imgtk_match)
+        else:
+            self.match_status_label.config(image=self.match_imgtk_no_match)
 
     def update_score(self):
         pm = PlayerManager.get_instance()
-        self.score_label.config(text=f"Score: {pm.get_player_score()}")
+        self.score_label.config(text=f"{pm.get_player_score()}")
         self.change_ref_photo()
 
     def update_combo_text(self, combo):
@@ -121,12 +141,6 @@ class GameFrame(tk.Frame):
             self.combo_label.config(text=f'{combo}x')
         else:
             self.combo_label.config(text="")
-    
-    def update_match_status(self, match):
-        if match:
-            self.match_status_label.config(text="Pose Match", fg="green")
-        else:
-            self.match_status_label.config(text="No match", fg="red")
 
     def end_game(self):
         pm = PlayerManager.get_instance()
@@ -137,8 +151,6 @@ class GameFrame(tk.Frame):
         self.timer_running = False
         self.camera_feed.stop()
         self.pack_forget()
-
-        pygame.mixer.music.stop()
 
         # Transition to session review
         from gui.game_review import GameReview
