@@ -27,7 +27,7 @@ class GameFrame(tk.Frame):
 
         pm = PlayerManager.get_instance()
         # Initialize pygame mixer for music
-        music_folder = r"assets\\Music_Game"
+        music_folder = r"assets/Music_Game"
 
         # Get list of all music files in the folder
         music_files = [os.path.join(music_folder, file) for file in os.listdir(music_folder) if

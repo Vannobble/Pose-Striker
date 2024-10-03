@@ -12,13 +12,13 @@ class GameReview(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         # Load and resize background image using Pillow
-        image = Image.open(r"assets/decor/game review.png")
+        image = Image.open("assets/decor/game review.png")
         resized_image = image.resize((1600, 900), Image.LANCZOS)  # Resize image using LANCZOS
 
         self.bg_image = ImageTk.PhotoImage(resized_image)
 
         # Initialize pygame mixer for music
-        music_folder = r"assets\\Music_Review"
+        music_folder = "assets/Music_Review"
 
         # Get list of all music files in the folder
         music_files = [os.path.join(music_folder, file) for file in os.listdir(music_folder) if

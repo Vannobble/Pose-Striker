@@ -66,7 +66,7 @@ class MainMenu(tk.Frame):
 
     def play_music(self):
         # Music folder and loading music files
-        music_folder1 = r"assets\\music"
+        music_folder1 = "assets/music"
         music_files1 = [os.path.join(music_folder1, file) for file in os.listdir(music_folder1) if
                         file.endswith(('.mp3', '.wav'))]
 

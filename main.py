@@ -9,6 +9,21 @@ def toggle_fullscreen(event=None):
 # Function to exit fullscreen mode (bound to the Escape key)
 def exit_fullscreen(event=None):
     root.attributes("-fullscreen", False)  # Exit fullscreen
+<<<<<<< Tabnine <<<<<<<
+def exit_fullscreen(event=None):#+
+    """#+
+    This function is used to exit fullscreen mode.#+
+#+
+    Parameters:#+
+    event (tk.Event, optional): The event that triggered this function. Defaults to None.#+
+        This parameter is not used in the function's logic but is kept for compatibility with#+
+        the tkinter event binding system.#+
+#+
+    Returns:#+
+    None#+
+    """#+
+    root.attributes("-fullscreen", False)  # Exit fullscreen#+
+>>>>>>> Tabnine >>>>>>># {"conversationId":"218f86ef-685c-4b42-bdd0-df3af4e3c05e","source":"instruct"}
 
 def main():
     global root
