@@ -10,6 +10,7 @@ def toggle_fullscreen(event=None):
 def exit_fullscreen(event=None):
     root.attributes("-fullscreen", False)  # Exit fullscreen
 
+
 def main():
     global root
 

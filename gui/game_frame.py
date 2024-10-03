@@ -25,6 +25,9 @@ class GameFrame(tk.Frame):
 
         pm = PlayerManager.get_instance()
 
+        # Initialize pygame mixer for music
+        music_folder = r"assets/Music_Game"
+
         # Middle frame for reference image, score, timer, and combo
         self.middle_frame = tk.Frame(self, bg='gold2')
         self.middle_frame.pack(pady=0, padx=0)

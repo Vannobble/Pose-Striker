@@ -55,6 +55,16 @@ class MainMenu(tk.Frame):
         self.start_button.pack(pady=30)
         self.start_button.place(relx=0.5, rely=0.92, anchor=tk.CENTER, width=150, height=40)
 
+    def play_music(self):
+        # Music folder and loading music files
+        music_folder1 = "assets/music"
+        music_files1 = [os.path.join(music_folder1, file) for file in os.listdir(music_folder1) if
+                        file.endswith(('.mp3', '.wav'))]
+
+        if music_files1:
+            random_music1 = random.choice(music_files1)
+            pygame.mixer.music.load(random_music1)
+            pygame.mixer.music.play(-1)  # Loop indefinitely
 
     def create_leaderboard_frame(self):
 
