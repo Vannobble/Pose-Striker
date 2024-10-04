@@ -3,6 +3,10 @@ from PIL import Image, ImageTk
 from gui.components import ScrollableLeaderboard, DropdownMenu
 from gui.game_frame import GameFrame
 from game_logic.player_manager import PlayerManager
+import pygame
+import os
+import random
+import threading
 
 class MainMenu(tk.Frame):
     def __init__(self, parent):
@@ -21,6 +25,11 @@ class MainMenu(tk.Frame):
         # create the leaderboard frame
         self.create_leaderboard_frame()
         self.create_player_input_section()
+
+        # Initialize pygame mixer in a separate thread for music
+        pygame.mixer.init()
+        self.music_thread = threading.Thread(target=self.play_music, daemon=True)
+        self.music_thread.start()
 
     def create_player_input_section(self):
         # Input fields (Player Name and Cluster)
@@ -95,6 +104,8 @@ class MainMenu(tk.Frame):
                 if not player_exist:
                     pm.add_player(player_name, player_cluster)
                 pm.set_current_player(player_name, player_cluster)
+
+                pygame.mixer.music.stop()
 
                 self.pack_forget()  # Hide main menu
                 game_frame = GameFrame(self.master)
