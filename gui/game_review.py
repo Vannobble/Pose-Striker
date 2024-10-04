@@ -2,6 +2,11 @@ import tkinter as tk
 from gui.components import ScrollableLeaderboard
 from game_logic.player_manager import PlayerManager
 from PIL import Image, ImageTk
+import threading
+import time
+import os
+import pygame
+import random
 
 
 class GameReview(tk.Frame):
@@ -24,7 +29,7 @@ class GameReview(tk.Frame):
         random_music = random.choice(music_files)
 
         pygame.mixer.music.load(random_music)  # Load the randomly chosen music
-        pygame.mixer.music.play(-1)  # Play the music in a loop
+        pygame.mixer.music.play(1)  # Play the music in a loop
 
         # Create a label to hold the background image
         self.bg_label = tk.Label(self, image=self.bg_image)
@@ -69,7 +74,7 @@ class GameReview(tk.Frame):
         self.leaderboard_display.place(relx=0.5, rely=0.48, anchor=tk.CENTER, width=550, height=357)
 
         # Player's ranking row (only show if player is not in top 5)
-        if player_rank > 5:
+        if player_rank > 0:
             self.player_ranking_label = tk.Label(self, text=f"Your Rank: {player_rank} (Score: {self.pm.get_player_score()})", font=('Arial 22 bold'), fg="#384987", bg="#E6CF00")
             self.player_ranking_label.pack(pady=10)
             self.player_ranking_label.place(relx=0.5, rely=0.76, anchor=tk.CENTER)
@@ -109,6 +114,7 @@ class GameReview(tk.Frame):
             self.main_menu_button.place(relx=0.5, rely=0.88, anchor=tk.CENTER, width=150, height=45)
 
     def play_again(self):
+        pygame.mixer.music.stop()
         self.pack_forget()  # Hide review frame
         # Go back to the main game frame (this part depends on how you manage transitions)
         from gui.game_frame import GameFrame
@@ -116,6 +122,7 @@ class GameReview(tk.Frame):
         game_frame.pack(fill=tk.BOTH, expand=True)
 
     def return_to_main_menu(self):
+        pygame.mixer.music.stop()
         self.pack_forget()
         # Go back to main menu
         from gui.main_menu import MainMenu
