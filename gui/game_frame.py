@@ -6,6 +6,8 @@ from PIL import Image, ImageTk
 import threading
 import time
 import os
+import pygame
+import random
 
 class GameFrame(tk.Frame):
     def __init__(self, parent, timer_running=True):
@@ -26,7 +28,17 @@ class GameFrame(tk.Frame):
         pm = PlayerManager.get_instance()
 
         # Initialize pygame mixer for music
-        music_folder = r"assets/Music_Game"
+        music_folder = r"assets\\Music_Game"
+
+        # Get list of all music files in the folder
+        music_files = [os.path.join(music_folder, file) for file in os.listdir(music_folder) if
+                       file.endswith(('.mp3', '.wav'))]
+
+        # Choose a random music file to play
+        random_music = random.choice(music_files)
+
+        pygame.mixer.music.load(random_music)  # Load the randomly chosen music
+        pygame.mixer.music.play(-1)  # Play the music in a loop
 
         # Middle frame for reference image, score, timer, and combo
         self.middle_frame = tk.Frame(self, bg='gold2')
@@ -154,6 +166,8 @@ class GameFrame(tk.Frame):
         self.timer_running = False
         self.camera_feed.stop()
         self.pack_forget()
+
+        pygame.mixer.music.stop()
 
         # Transition to session review
         from gui.game_review import GameReview
