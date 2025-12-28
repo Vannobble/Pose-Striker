@@ -1,5 +1,7 @@
 # Pose Striker - Game Deteksi Pose dengan MediaPipe Untuk OpenHouse ROBOTIIK FILKOM UB 2024
 
+![Pose_Striker](Display.png)
+
 ## 📌 Overview
 Pose Striker adalah aplikasi game interaktif yang menggunakan computer vision untuk mendeteksi pose tubuh pemain dan membandingkannya dengan pose referensi. Aplikasi ini dikembangkan dengan Python menggunakan MediaPipe untuk pose detection dan Tkinter untuk GUI.
 
