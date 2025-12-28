@@ -51,21 +51,18 @@ pose-striker/
 
 ## 🚀 Instalasi dan Setup
 
-### 1. Prasyarat
-Pastikan Python 3.x sudah terinstall di sistem Anda.
-
-### 2. Install Dependencies
-```bash
-pip install opencv-python mediapipe numpy pillow
-```
-
-### 3. Clone Repository
+### 1. Clone Repository
 ```bash
 git clone [repository-url]
 cd pose-striker
 ```
 
-### 4. Run Aplikasi
+### 2. Install Dependencie
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run Aplikasi
 ```bash
 python main.py
 ```
